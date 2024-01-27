@@ -1,0 +1,38 @@
+#+title: Design
+
+* Premise
+ClickityClackity will be a lightweight, easy-to-use I/O automation suite which
+can either be programmed explicitly or be used to playback arbitrary recordings
+of input events a user creates.
+
+* Features
+** GreenShot/LICEcap style "frame" UI
+The UI will look like GreenShot or LiceCAP. Like a frame thing.
+** Custom plaintext file format for storing I/O actions
+These files (denoted with a filename ending with ".clicky") will store the
+necessary information for ClickityClackity to automatically reproduce the I/O
+actions stored within. They can be created through a few different workflows. A
+.clicky file can be played back the same way regardless of how it was created or
+modified as long as its contents are valid.
+*** Workflows for creating .clicky files
+**** download workflow
+Users can download pre-existing .clicky files created by other users. However,
+this may have mixed results due to potential differences in hardware such as
+screen resolution or performance-induced workflow timing differences, so
+modifications may be necessary.
+**** record workflow
+Users can click a red circle thing to have ClickityClackity begin automatically
+generating a .clicky file storing all of the I/O actions that the user performs
+up to but not including the final click on either the pause button or the stop
+button.
+**** scripting workflow
+Users can also simply create .clicky files using any text editor of their
+choosing.
+*** The "pause for input" action
+The "pause for input" action will be a unique I/O event which can be represented
+in .clicky files. These actions will pause playback indefinitely, allowing the
+user to perform arbitrary workflow steps such as entering something sensitive
+like a password or inputting data that is not necessarily the same each time.
+When the "pause for input" action has begun, the user will be able to indicate
+they are ready for playback to resume by clicking the "Resume" button in the
+bottom right or by pressing Ctrl+Enter

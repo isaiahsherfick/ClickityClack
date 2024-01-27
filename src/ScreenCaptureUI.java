@@ -5,12 +5,12 @@ import java.awt.event.MouseEvent;
 
 public class ScreenCaptureUI extends JFrame {
 
-    public ScreenCaptureUI() {
-        setUndecorated(true); // Remove window decorations
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // Full-screen window
-        setLayout(new BorderLayout());
+public ScreenCaptureUI() {
+setUndecorated(true); // Remove window decorations
+setExtendedState(JFrame.MAXIMIZED_BOTH); // Full-screen window
+setLayout(new BorderLayout());
 
-        setOpacity(0.5f); // Set transparency (0.0f to 1.0f)
+setOpacity(0.5f); // Set transparency (0.0f to 1.0f)
 
         addMouseListener(new MouseAdapter() {
             @Override
