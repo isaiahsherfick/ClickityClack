@@ -1,31 +1,34 @@
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
-public class ScreenCaptureUI extends JFrame {
+public class ScreenCaptureUI extends Application {
 
-public ScreenCaptureUI() {
-setUndecorated(true); // Remove window decorations
-setExtendedState(JFrame.MAXIMIZED_BOTH); // Full-screen window
-setLayout(new BorderLayout());
+    @Override
+    public void start(Stage primaryStage) {
+        // Create a transparent stage
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
 
-setOpacity(0.5f); // Set transparency (0.0f to 1.0f)
+        // Create a transparent panel with a hole
+        Pane root = new Pane();
+        root.setStyle("-fx-background-color: transparent;");
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                // Handle mouse click events
-                System.out.println("Mouse Clicked at: " + e.getPoint());
-            }
-        });
+        // Create a rectangle to act as the hole
+        Rectangle hole = new Rectangle(200, 200, 200, 100);
+        hole.setFill(Color.TRANSPARENT);
+        hole.setStroke(Color.WHITE); // For visualization purposes
+        root.getChildren().add(hole);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
-        setVisible(true);
+        Scene scene = new Scene(root, 600, 400, Color.TRANSPARENT);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ScreenCaptureUI());
+        launch(args);
     }
 }
