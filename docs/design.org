@@ -1,5 +1,12 @@
 #+title: Design
 
+#+BEGIN_SRC bash
+cd ../src/
+./run.sh
+#+END_SRC
+
+#+RESULTS:
+
 * Premise
 ClickityClackity will be a lightweight, easy-to-use I/O automation suite which
 can either be programmed explicitly or be used to playback arbitrary recordings
@@ -36,3 +43,179 @@ like a password or inputting data that is not necessarily the same each time.
 When the "pause for input" action has begun, the user will be able to indicate
 they are ready for playback to resume by clicking the "Resume" button in the
 bottom right or by pressing Ctrl+Enter
+
+* Implementation details
+We will use the Javafx library to draw the GUI
+** Referenced Documentation
+*** JFX
+**** Stage
+public class Stage extends Window
+ The JavaFX Stage class is the top level JavaFX container. The primary Stage is
+ constructed by the platform. Additional Stage objects may be constructed by the
+ application.
+
+ Stage objects must be constructed and modified on the JavaFX Application
+ Thread.
+
+ Many of the Stage properties are read only because they can be changed
+ externally by the underlying platform and therefore must not be bindable.
+
+***** Style
+
+ A stage has one of the following styles:
+
+ * StageStyle.DECORATED - a stage with a solid white background and platform decorations.
+ * StageStyle.UNDECORATED - a stage with a solid white background and no decorations.
+ * StageStyle.TRANSPARENT - a stage with a transparent background and no decorations.
+ * StageStyle.UTILITY - a stage with a solid white background and minimal platform decorations.
+
+ The style must be initialized before the stage is made visible.
+
+ On some platforms decorations might not be available. For example, on some
+ mobile or embedded devices. In these cases a request for a DECORATED or UTILITY
+ window will be accepted, but no decorations will be shown.
+
+***** Owner
+
+ A stage can optionally have an owner Window. When a window is a stage's owner,
+ it is said to be the parent of that stage. When a parent window is closed, all
+ its descendant windows are closed. The same chained behavior applied for a
+ parent window that is iconified. A stage will always be on top of its parent
+ window. The owner must be initialized before the stage is made visible.
+
+***** Modality
+
+ A stage has one of the following modalities:
+
+ * Modality.NONE - a stage that does not block any other window.
+ * Modality.WINDOW_MODAL - a stage that blocks input events from being delivered to all windows from its owner (parent) to its root. Its root is the
+ closest ancestor window without an owner.
+ * Modality.APPLICATION_MODAL - a stage that blocks input events from being delivered to all windows from the same application, except for
+ those from its child hierarchy.
+
+ When a window is blocked by a modal stage its Z-order relative to its ancestors is preserved, and it receives no input events and no window
+ activation events, but continues to animate and render normally. Note that showing a modal stage does not necessarily block the caller. The show()
+ method returns immediately regardless of the modality of the stage. Use the showAndWait() method if you need to block the caller until the
+ modal stage is hidden (closed). The modality must be initialized before the stage is made visible.
+
+***** Example:
+
+#+BEGIN_SRC java
+import javafx.application.Application;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+public class HelloWorld extends Application {
+
+    @Override public void start(Stage stage) {
+        Text text = new Text(10, 40, "Hello World!");
+        text.setFont(new Font(40));
+        Scene scene = new Scene(new Group(text));
+
+        stage.setTitle("Welcome to JavaFX!");
+        stage.setScene(scene);
+        stage.sizeToScene();
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        Application.launch(args);
+    }
+}
+#+END_SRC
+**** Pane
+public class Pane
+extends Region
+
+Base class for layout panes which need to expose the children list as public so
+that users of the subclass can freely add/remove children.
+
+ This class may be used directly in cases where absolute positioning of children
+ is required since it does not perform layout beyond resizing resizable children
+ to their preferred sizes. It is the application's responsibility to position
+ the children since the pane leaves the positions alone during layout. For
+ example:
+
+
+ #+BEGIN_SRC java
+    Pane canvas = new Pane();
+    canvas.setStyle("-fx-background-color: black;");
+    canvas.setPrefSize(200,200);
+    Circle circle = new Circle(50,Color.BLUE);
+    circle.relocate(20, 20);
+    Rectangle rectangle = new Rectangle(100,100,Color.RED);
+    rectangle.relocate(70,70);
+    canvas.getChildren().addAll(circle,rectangle);
+#+END_SRC
+
+ Note: if an application needs children to be kept aligned within a parent (centered, positioned at top-left, etc),
+ it should use a StackPane instead.
+
+ Pane resizes each managed child regardless of the child's visible property value; unmanaged children are
+ ignored for all layout calculations.
+
+***** Resizable Range
+
+ A pane's parent will resize the pane within the pane's resizable range during
+ layout. By default the pane computes this range based on its content as
+ outlined in the tables below:
+
+    width  height minimum  left plus right insets.  top plus bottom insets.
+  preferred  width required to encompass each child at its  height required to
+  encompass each child at its current x location and preferred width.  current y
+  location and preferred height.  maximum  Double.MAX_VALUE  Double.MAX_VALUE
+
+ A pane's unbounded maximum width and height are an indication to the parent
+ that it may be resized beyond its preferred size to fill whatever space is
+ assigned to it.
+
+ Pane provides properties for setting the size range directly. These properties
+ default to the sentinel value Region.USE_COMPUTED_SIZE, however the application
+ may set them to other values as needed:
+
+
+     pane.setPrefSize(500,400);
+
+ Applications may restore the computed values by setting these properties back
+ to Region.USE_COMPUTED_SIZE.
+
+ Pane does not clip its content by default, so it is possible that childrens'
+ bounds may extend outside its own bounds, either if children are positioned at
+ negative coordinates or the pane is resized smaller than its preferred size.
+
+ Since: JavaFX 2.0
+***
+** Internet searches
+*** get stage width and height
+https://stackoverflow.com/questions/17265493/javafx-stage-width-height-after-sizetoscene-call
+The stage's width and height values are calculated after the stage has been shown. You can set minimum values of these
+values after the stage shown:
+
+#+BEGIN_SRC java
+@Override
+public void start(Stage primaryStage) {
+    StackPane root = new StackPane();
+    Scene scene = new Scene(root, 800, 600);
+    primaryStage.setScene(scene);
+
+    System.out.println("before sceneW " + scene.getWidth());
+    System.out.println("before sceneH " +  scene.getHeight());
+    System.out.println("before stageW " + primaryStage.getWidth());
+    System.out.println("before stageH " + primaryStage.getHeight());
+
+    primaryStage.show();
+
+    System.out.println("after sceneW " + scene.getWidth());
+    System.out.println("after sceneH " +  scene.getHeight());
+    System.out.println("after stageW " + primaryStage.getWidth());
+    System.out.println("after stageH " + primaryStage.getHeight());
+
+    primaryStage.setMinWidth(primaryStage.getWidth());
+    primaryStage.setMinHeight(primaryStage.getHeight());
+}
+#+END_SRC
+
+sizeToScene() is similar to Swing's (AWT) pack(). I think you don't need it here.
